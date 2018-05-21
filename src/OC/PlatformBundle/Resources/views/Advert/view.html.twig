@@ -1,0 +1,99 @@
+{# src/OC/PlatformBundle/Resources/view/Advert/view.html.twig #}
+
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+    Lecture d'une annonce - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+    {# On affiche tous les messages flash dont la clé est notice #}
+    {% for message in app.session.flashbag.get('notice') %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+
+    <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
+        <h3>{{ advert.title }}</h3>
+    </a>
+    <p><i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i></p>
+
+    {% if not advert.categories.empty %}
+        <p>
+            Catégories :
+            {% for category in advert.categories %}
+                {{ category.name }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    <div class="row">
+
+        {# On vérifie qu'une image soit bien associée à l'annonce #}
+        {% if advert.image is not null %}
+            <div class="col-sm-4">
+                <img src="{{ asset(advert.image.webPath) }}" alt="{{ advert.image.alt }}" class="img-responsive">
+            </div>
+            <br>
+        {% endif %}
+
+        <div class="col-sm-8">
+
+            <div class="well">
+                {{ advert.content }}
+            </div>
+
+            {% if advert.advertSkills|length > 0 %}
+            <p>
+                Cette annonce requiert les {{ advert.advertSkills|length }} compétences suivantes :
+                <ul>
+                    {% for advertSkill in advert.advertSkills %}
+
+                        <li>{{ advertSkill.skill.name }} : niveau {{ advertSkill.level }}</li>
+                    {% endfor %}
+                </ul>
+            </p>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    <hr>
+
+    {#{% if listApplications is not empty %}#}
+        <h2>Liste des candidatures</h2>
+        <ul>
+        {% for application in listApplications %}
+            <li>
+                <i>Par {{ application.author }}, le {{ application.date|date('d/m/Y') }}</i>
+
+                <div class="well">
+                    {{ application.content }}
+                </div>
+            </li>
+        {% else %}
+            <li>Pas (encore !) de candidatures</li>
+        {% endfor %}
+        </ul>
+        <hr>
+    {#{% endif %}#}
+
+    <p>
+        <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Retour à la liste
+        </a>
+        {% if is_granted('ROLE_AUTEUR') %}
+            <a href="{{ path('oc_platform_edit', {'id': advert.id}) }}" class="btn btn-default">
+                <i class="glyphicon glyphicon-edit"></i>
+                Modifier l'annonce
+            </a>
+            <a href="{{ path('oc_platform_delete', {'id': advert.id}) }}" class="btn btn-danger">
+                <i class="glyphicon glyphicon-trash"></i>
+                Supprimer l'annonce
+            </a>
+        {% endif %}
+    </p>
+
+{% endblock %}

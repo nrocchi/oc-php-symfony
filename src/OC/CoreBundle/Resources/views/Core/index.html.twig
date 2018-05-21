@@ -1,0 +1,83 @@
+{# src/OC/CoreBundle/Resources/views/Core/index.html.twig #}
+
+{% extends "OCCoreBundle::layout.html.twig" %}
+
+{% block title %}
+    Accueil - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    {# On affiche tous les messages flash dont la clé est contact #}
+    {% for message in app.session.flashbag.get('contact') %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+
+    {# On affiche tous les messages flash dont la clé est notice #}
+    {% for message in app.session.flashbag.get('notice') %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+
+    <h1>Ceci est la page d'accueil du site !</h1>
+    <hr>
+
+    <h2>Liste des annonces</h2>
+    <hr>
+
+    {% for advert in listAdverts %}
+
+        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
+            <h3>{{ advert.title }}</h3>
+        </a>
+        <p><i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i></p>
+
+        {% if not advert.categories.empty %}
+            <p>
+                Catégories :
+                {% for category in advert.categories %}
+                    {{ category.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
+
+        <div class="row">
+
+            {# On vérifie qu'une image soit bien associée à l'annonce #}
+            {% if advert.image is not null %}
+                <div class="col-sm-4">
+                    <img src="{{ asset(advert.image.webPath) }}" alt="{{ advert.image.alt }}" class="img-responsive">
+                </div>
+                <br>
+            {% endif %}
+
+            <div class="col-sm-8">
+
+        <div class="well">
+            {{ advert.content }}
+        </div>
+
+                {% if advert.advertSkills|length > 0 %}
+                <p>
+                    Cette annonce requiert les {{ advert.advertSkills|length }} compétences suivantes :
+                    <ul>
+                        {% for advertSkill in advert.advertSkills %}
+
+                            <li>{{ advertSkill.skill.name }} : niveau {{ advertSkill.level }}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% if not loop.last %}<hr>{% endif %}
+
+    {% else %}
+        <li>Pas (encore !) d'annonces</li>
+    {% endfor %}
+
+    <hr>
+
+{% endblock %}

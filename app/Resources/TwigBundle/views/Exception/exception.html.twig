@@ -1,0 +1,30 @@
+{# app/Resources/TwigBundle/views/Exception/exception.html.twig #}
+
+{% extends "OCCoreBundle::layout.html.twig" %}
+
+{% block title %}
+    An Error Occurred: {{ status_text }}
+{% endblock %}
+
+{% block body %}
+
+    <h1>Yo! Oops! An Error Occurred</h1>
+    <h2>The server returned a "{{ status_code }} {{ status_text }}".</h2>
+    <hr>
+
+    <div class="well">
+        Something is broken. Please e-mail us at [email] and let us know
+        what you were doing when this error occurred. We will fix it as soon
+        as possible. Sorry for any inconvenience caused.
+    </div>
+
+    <hr>
+
+    <div>
+        <a href="{{ path('oc_core_home') }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Retour à l'accueil
+        </a>
+    </div>
+
+{% endblock %}
